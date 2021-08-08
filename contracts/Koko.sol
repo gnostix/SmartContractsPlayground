@@ -3,9 +3,6 @@ pragma solidity >=0.6.0 <=0.7.6;
 
 contract Koko {
 
-    
-
-    
     uint storedData;  // State variable
     event Paid(address indexed _from, uint _value);
     event Receive(address indexed _from, uint _value);

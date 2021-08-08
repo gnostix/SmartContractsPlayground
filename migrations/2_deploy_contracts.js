@@ -3,7 +3,7 @@ const MyLib = artifacts.require("MyLib");
 
 const MetaCoin = artifacts.require("MetaCoin");
 const Koko = artifacts.require("Koko");
-const Koko2 = artifacts.require("Koko2");
+const WithdrawalContract = artifacts.require("WithdrawalContract");
 const SendEther = artifacts.require("SendEther");
 
 module.exports = function(deployer) {
@@ -16,7 +16,7 @@ module.exports = function(deployer) {
 
   deployer.deploy(MetaCoin);
   deployer.deploy(Koko);
-  deployer.deploy(Koko2);
+  deployer.deploy(WithdrawalContract);
   deployer.deploy(SendEther);
 
 };
