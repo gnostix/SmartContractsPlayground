@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.7.5;
+pragma solidity ^0.7.0;
 
 contract WithdrawalContract {
     address public richest;
@@ -25,6 +25,7 @@ contract WithdrawalContract {
 
     function withdraw() public {
         uint amount = pendingWithdrawals[msg.sender];
+        // address payable sender = msg.sender;
         // Remember to zero the pending refund before
         // sending to prevent re-entrancy attacks
         pendingWithdrawals[msg.sender] = 0;

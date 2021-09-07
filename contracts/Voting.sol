@@ -2,6 +2,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 // pragma abicoder v2;
 
+
 contract Ballot {
 
     struct Voter {
@@ -17,6 +18,7 @@ contract Ballot {
     }
 
     event TheVoter(address addr, uint voteCount, uint propNumber);
+    event ContractCreated(address addr);
 
     address public chairPerson;
 
@@ -25,6 +27,7 @@ contract Ballot {
     Proposal[] public proposals;
 
     constructor(bytes32[] memory proposalNames){
+
         chairPerson = msg.sender;
         voters[chairPerson].weight = 1;
 
@@ -33,20 +36,23 @@ contract Ballot {
             proposals.push(prop);
         }
 
+        emit ContractCreated(msg.sender);
     }
 
-    function giveRightToVote(address voter) public {
+    function giveRightToVote(address voter) public returns(bool isOk_){
         require(msg.sender == chairPerson, "Only chairPerson can give right to vote");
         require(!voters[voter].voted, "The voter has already voted");
         require(voters[voter].weight == 0);
 
         voters[voter].weight = 1;
+        isOk_ = true;
     }
 
     function delegate(address to) public {
         Voter storage sender = voters[msg.sender];
         require(!sender.voted, "You already voted!");
         require(msg.sender != to, "Self-delegation is disallowed.");
+        require(sender.weight != 0, "Has no right to vote. Try to get access first");
 
         while(voters[to].delegate != address(0)){
             to = voters[to].delegate;
@@ -60,7 +66,7 @@ contract Ballot {
         if(delegate_.voted){
             proposals[delegate_.vote].voteCount += sender.weight;
         } else {
-            delegate_.weight = sender.weight;
+            delegate_.weight += sender.weight;
         }
 
         emit TheVoter(msg.sender, sender.weight, delegate_.vote);
@@ -75,6 +81,7 @@ contract Ballot {
         sender.vote = proposal;
 
         proposals[proposal].voteCount += sender.weight;
+        emit TheVoter(msg.sender, sender.weight, proposal);
     }
 
     function winningProposal() public view returns (uint winningProposal_) {
@@ -91,10 +98,5 @@ contract Ballot {
     function  winnerName() public view returns (bytes32 winnerName_) {
         winnerName_ = proposals[winningProposal()].name;
     }
-
-    // function getVoters() public view returns (Proposal[] memory props_ ){
-    //     props_ = proposals;
-    // }
-
 
 }
